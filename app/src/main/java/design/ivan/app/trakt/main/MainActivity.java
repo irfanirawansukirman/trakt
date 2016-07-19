@@ -23,6 +23,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import design.ivan.app.trakt.R;
+import design.ivan.app.trakt.topmovie.TopMoviesFragment;
 
 public class MainActivity extends AppCompatActivity implements IMainContract.MainView{
 
@@ -41,13 +42,13 @@ public class MainActivity extends AppCompatActivity implements IMainContract.Mai
      * The {@link ViewPager} that will host the section contents.
      */
     @BindView(R.id.container)
-    private ViewPager mViewPager;
+    ViewPager mViewPager;
     private IMainContract.ActionListener actionListener;
     Snackbar snackbar;
     @BindView(R.id.main_content)
-    private CoordinatorLayout root;
+    CoordinatorLayout root;
     @BindView(R.id.toolbar)
-    private Toolbar toolbar;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,8 +207,7 @@ public class MainActivity extends AppCompatActivity implements IMainContract.Mai
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
+            if(position == 0) return TopMoviesFragment.newIstance();
             return PlaceholderFragment.newInstance(position + 1);
         }
 

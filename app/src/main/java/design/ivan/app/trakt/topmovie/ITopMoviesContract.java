@@ -1,13 +1,13 @@
-package design.ivan.app.trakt.main;
+package design.ivan.app.trakt.topmovie;
 
 import android.app.Activity;
 import android.support.annotation.StringRes;
 
 /**
- * Created by ivanm on 7/19/16.
+ * Created by ivanm on 7/20/16.
  */
-public interface IMainContract {
-    interface MainView
+public interface ITopMoviesContract {
+    interface TopMoviesView
     {
         void showSnackbar(@StringRes int resMessage);
         void showSnackbar(@StringRes int resMessage, boolean alwaysOn);
@@ -22,5 +22,4 @@ public interface IMainContract {
         void setupListeners(Activity main);
         void clearListeners(Activity main);
     }
-
 }
