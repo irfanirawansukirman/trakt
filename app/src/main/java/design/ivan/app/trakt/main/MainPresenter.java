@@ -8,9 +8,6 @@ import android.net.wifi.WifiManager;
 import design.ivan.app.trakt.R;
 import design.ivan.app.trakt.network.NetworkChangeReceiver;
 
-/**
- * Created by ivanm on 7/19/16.
- */
 public class MainPresenter implements IMainContract.ActionListener,
         NetworkChangeReceiver.NetworkChangeListener {
 

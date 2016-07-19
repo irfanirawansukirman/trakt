@@ -7,9 +7,6 @@ import android.util.Log;
 
 import design.ivan.app.trakt.Utility;
 
-/**
- * Created by ivanm on 7/19/16.
- */
 public class NetworkChangeReceiver extends BroadcastReceiver {
     public interface NetworkChangeListener {
         void onNetworkChange(boolean connected);

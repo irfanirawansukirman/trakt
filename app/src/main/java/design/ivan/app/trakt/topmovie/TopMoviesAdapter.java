@@ -4,9 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by ivanm on 7/19/16.
- */
+
 public class TopMoviesAdapter extends RecyclerView.Adapter<TopMoviesAdapter.TopMoviesViewHolder>{
     public static interface HandlerTopMoviesOnClick{
         void OnClickItem(String id);

@@ -3,9 +3,6 @@ package design.ivan.app.trakt.main;
 import android.app.Activity;
 import android.support.annotation.StringRes;
 
-/**
- * Created by ivanm on 7/19/16.
- */
 public interface IMainContract {
     interface MainView
     {

@@ -17,9 +17,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import design.ivan.app.trakt.R;
 
-/**
- * Created by ivanm on 7/19/16.
- */
+
 public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.HandlerTopMoviesOnClick,
         ITopMoviesContract.TopMoviesView{
 
