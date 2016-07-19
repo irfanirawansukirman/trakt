@@ -6,4 +6,7 @@
     <!-- Main Activity -->
     <string name="online">You are now online</string>
     <string name="offline">You are working offline</string>
+    <string name="top_movies">Top Movies</string>
+    <string name="search">Search</string>
+
 </resources>

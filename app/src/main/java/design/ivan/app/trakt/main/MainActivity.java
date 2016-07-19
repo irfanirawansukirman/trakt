@@ -213,7 +213,6 @@ public class MainActivity extends AppCompatActivity implements IMainContract.Mai
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return 2;
         }
 
@@ -221,9 +220,9 @@ public class MainActivity extends AppCompatActivity implements IMainContract.Mai
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return getString(R.string.top_movies);
                 case 1:
-                    return "SECTION 2";
+                    return getString(R.string.search);
             }
             return null;
         }
