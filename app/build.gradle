@@ -28,7 +28,9 @@ dependencies {
     compile "com.android.support:design:$supportLibraryVersion"
 
     //3rd party libraries
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile 'com.jakewharton:butterknife:8.2.1'
-    apt 'com.jakewharton:butterknife-compiler:8.2.1'
+    compile "com.squareup.retrofit2:retrofit:2.1.0"
+    compile "com.squareup.retrofit2:converter-moshi:2.1.0"
+    compile "com.jakewharton:butterknife:8.2.1"
+    apt "com.jakewharton:butterknife-compiler:8.2.1"
+
 }

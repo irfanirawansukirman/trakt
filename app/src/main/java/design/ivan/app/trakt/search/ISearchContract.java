@@ -1,13 +1,14 @@
-package design.ivan.app.trakt.topmovie;
+package design.ivan.app.trakt.search;
 
 import android.app.Activity;
 import android.support.annotation.StringRes;
 
-public interface ITopMoviesContract {
-    interface TopMoviesView
-    {
+/**
+ * Created by ivanm on 7/20/16.
+ */
+public interface ISearchContract {
+    interface SearchView{
         void initListUi();
-        void goToPreviousPosition();
         void showSnackbar(@StringRes int resMessage);
         void showSnackbar(@StringRes int resMessage, boolean alwaysOn);
         void hideSnackbar();
@@ -16,10 +17,11 @@ public interface ITopMoviesContract {
         void showMessage(@StringRes int message);
         void enableUI(boolean activate);
     }
-    interface ActionListener
-    {
+    interface ActionListener{
         void setupListeners(Activity main);
         void clearListeners(Activity main);
-        void getTopMovies();
+        void setupSearchRequest();
+        void clearSearchRequest();
+        void doSearch(String searchString);
     }
 }

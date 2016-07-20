@@ -41,18 +41,20 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
         Log.d(TAG, "onCreateView: ");
         View rootView = inflater.inflate(R.layout.frag_top_movie, container, false);
         unbinder = ButterKnife.bind(this, rootView);
-        listTopMovies.setLayoutManager(new LinearLayoutManager(getActivity()));
-        topMoviesAdapter = new TopMoviesAdapter(this);
-        listTopMovies.setAdapter(topMoviesAdapter);
+        initListUi();
         actionListener = new TopMoviesPresenter(this);
         showMessage(R.string.no_data);
+        actionListener.getTopMovies();
         return rootView;
     }
+
+
 
     @Override
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: ");
+        goToPreviousPosition();
     }
 
     @Override
@@ -81,6 +83,23 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
     }
 
     //*** TopMoviesView implementation ***
+
+    @Override
+    public void initListUi() {
+        listTopMovies.setLayoutManager(new LinearLayoutManager(getActivity()));
+        topMoviesAdapter = new TopMoviesAdapter(this);
+        listTopMovies.setAdapter(topMoviesAdapter);
+    }
+
+    @Override
+    public void goToPreviousPosition() {
+
+        if (listTopMovies.getLayoutManager() != null) {
+            int scrollPosition = ((LinearLayoutManager) listTopMovies.getLayoutManager())
+                    .findFirstCompletelyVisibleItemPosition();
+            listTopMovies.scrollToPosition(scrollPosition);
+        }
+    }
 
     @Override
     public void showSnackbar(@StringRes int resMessage) {
