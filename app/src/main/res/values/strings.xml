@@ -9,7 +9,7 @@
     <string name="offline">You are working offline</string>
     <string name="top_movies">Top Movies</string>
     <string name="search">Search</string>
-
+    <string name="syncing">Syncing your data</string>
     <!-- Top Movies -->
     <string name="no_data">Nothing to show</string>
 

@@ -13,9 +13,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by ivanm on 7/21/16.
- */
 public class SearchPresenter implements ISearchContract.ActionListener,
         TextWatcher, Callback<List<SearchResult>> {
 
@@ -77,7 +74,9 @@ public class SearchPresenter implements ISearchContract.ActionListener,
 
     @Override
     public void afterTextChanged(Editable editable) {
-        //Log.d(TAG, "afterTextChanged: string = " + editable.toString());
+        String editString = editable.toString();
+        if(editString.isEmpty())
+            return;
         doSearch(editable.toString());
     }
 

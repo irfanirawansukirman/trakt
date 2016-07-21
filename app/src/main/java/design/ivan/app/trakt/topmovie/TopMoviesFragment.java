@@ -3,6 +3,7 @@ package design.ivan.app.trakt.topmovie;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import design.ivan.app.trakt.R;
+import design.ivan.app.trakt.repo.RepoLoader;
 
 
 public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.HandlerTopMoviesOnClick,
@@ -29,6 +31,8 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
     RecyclerView listTopMovies;
     @BindView(R.id.top_movies_message)
     TextView messageTopMovies;
+    private Snackbar snackbar;
+    View rootView;
 
     public static TopMoviesFragment newIstance()
     {
@@ -39,12 +43,12 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: ");
-        View rootView = inflater.inflate(R.layout.frag_top_movie, container, false);
+        rootView = inflater.inflate(R.layout.frag_top_movie, container, false);
         unbinder = ButterKnife.bind(this, rootView);
         initListUi();
-        actionListener = new TopMoviesPresenter(this);
+        actionListener = new TopMoviesPresenter(RepoLoader.loadMemMovieRepository(), this);
         showMessage(R.string.no_data);
-        actionListener.getTopMovies();
+        actionListener.getTopMovies(false);
         return rootView;
     }
 
@@ -103,17 +107,25 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
 
     @Override
     public void showSnackbar(@StringRes int resMessage) {
-
+        showSnackbar(resMessage, false);
     }
 
     @Override
     public void showSnackbar(@StringRes int resMessage, boolean alwaysOn) {
-
+        if(alwaysOn){
+            snackbar = Snackbar.make(rootView, resMessage, Snackbar.LENGTH_INDEFINITE);
+        } else {
+            snackbar = Snackbar.make(rootView, resMessage, Snackbar.LENGTH_LONG);
+        }
+        snackbar.show();
     }
 
     @Override
     public void hideSnackbar() {
+        if(snackbar == null)
+            return;
 
+        snackbar.dismiss();
     }
 
     @Override

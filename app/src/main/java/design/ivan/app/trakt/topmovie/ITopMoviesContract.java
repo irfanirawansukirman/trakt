@@ -20,6 +20,10 @@ public interface ITopMoviesContract {
     {
         void setupListeners(Activity main);
         void clearListeners(Activity main);
-        void getTopMovies();
+        void getTopMovies(boolean forced);
+        void loadMovies();
+        void initConnection();
+        void doWebRequest();
+
     }
 }
