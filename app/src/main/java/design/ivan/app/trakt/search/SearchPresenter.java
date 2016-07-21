@@ -20,6 +20,7 @@ public class SearchPresenter implements ISearchContract.ActionListener,
         TextWatcher, Callback<List<SearchResult>> {
 
     private static final String TAG = "SearchPresenter";
+    private static final String EXTENDED_FULL = "images,full";
     ISearchContract.SearchView searchView;
     private ITraktAPIService traktAPIService;
     private Call<List<SearchResult>> call;
@@ -56,8 +57,10 @@ public class SearchPresenter implements ISearchContract.ActionListener,
         //Log.d(TAG, "doSearch: ");
         if(call != null)
             call.cancel();
-        call = traktAPIService.searchMovie(searchString);
+        call = traktAPIService.searchMovie(searchString, EXTENDED_FULL);
         call.enqueue(this);
+
+
     }
 
     // *** TextWatcher implementation ***
