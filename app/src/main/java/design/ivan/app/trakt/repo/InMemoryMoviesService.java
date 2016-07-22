@@ -35,7 +35,7 @@ public class InMemoryMoviesService implements IMemService<Movie> {
         Movie movie;
         int counter = 0;
         for (int i = 0; i < itemSparseArray.size(); i++) {
-            movie = itemSparseArray.get(i);
+            movie = itemSparseArray.valueAt(i);
             MOVIE_SERVICE_DATA.put(movie.getIds().getTrakt(), movie);
             counter++;
         }

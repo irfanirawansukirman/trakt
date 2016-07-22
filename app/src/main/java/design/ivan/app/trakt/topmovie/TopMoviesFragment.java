@@ -47,12 +47,15 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
         unbinder = ButterKnife.bind(this, rootView);
         initListUi();
         actionListener = new TopMoviesPresenter(RepoLoader.loadMemMovieRepository(), this);
-        showMessage(R.string.no_data);
-        actionListener.getTopMovies(false);
         return rootView;
     }
 
-
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        showMessage(R.string.no_data);
+        actionListener.getTopMovies(false);
+    }
 
     @Override
     public void onResume() {
