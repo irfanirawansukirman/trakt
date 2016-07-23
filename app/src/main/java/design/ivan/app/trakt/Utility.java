@@ -37,7 +37,7 @@ public class Utility {
         SparseArray<Movie> sparseArray = new SparseArray<>();
         for (int i = 0; i < movieArrayList.size(); i++) {
             currentMovie = movieArrayList.get(i);
-            sparseArray.put(currentMovie.getIds().getTrakt(), currentMovie);
+            sparseArray.put(i, currentMovie);
         }
         return sparseArray;
     }

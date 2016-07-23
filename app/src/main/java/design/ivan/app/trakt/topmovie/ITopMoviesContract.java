@@ -20,6 +20,9 @@ public interface ITopMoviesContract {
         void enableUI(boolean activate);
         void loadData(SparseArray<Movie> movieSparseArray);
         int adapterItemCount();
+        void notifyItemInserted();
+        void notifyItemRemoved();
+        void setLoaded();
     }
     interface ActionListener
     {

@@ -47,8 +47,9 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
         Log.d(TAG, "onCreateView: ");
         rootView = inflater.inflate(R.layout.frag_top_movie, container, false);
         unbinder = ButterKnife.bind(this, rootView);
-        initListUi();
+        //initListUi()
         actionListener = new TopMoviesPresenter(RepoLoader.loadMemMovieRepository(), this);
+        initListUi();
         return rootView;
     }
 
@@ -100,8 +101,9 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
     @Override
     public void initListUi() {
         listTopMovies.setLayoutManager(new LinearLayoutManager(getActivity()));
-        topMoviesAdapter = new TopMoviesAdapter(this);
+        topMoviesAdapter = new TopMoviesAdapter(listTopMovies, this);
         listTopMovies.setAdapter(topMoviesAdapter);
+        topMoviesAdapter.setOnLoadMoreListener(actionListener);
     }
 
     @Override
@@ -180,6 +182,21 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
             return topMoviesAdapter.getItemCount();
         }
         return 0;
+    }
+
+    @Override
+    public void notifyItemInserted() {
+        topMoviesAdapter.notifyItemInserted(topMoviesAdapter.getItemCount() - 1);
+    }
+
+    @Override
+    public void notifyItemRemoved() {
+        topMoviesAdapter.notifyItemRemoved(topMoviesAdapter.getItemCount());
+    }
+
+    @Override
+    public void setLoaded() {
+        topMoviesAdapter.setLoaded();
     }
 
     // +++ End TopMoviesView implementation +++

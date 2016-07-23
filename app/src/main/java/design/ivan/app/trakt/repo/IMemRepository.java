@@ -24,7 +24,8 @@ public interface IMemRepository<T> {
 
     void getItemList(@NonNull LoadItemsCallback<T> callback);
     void getItem(@NonNull Integer itemId, @NonNull GetItemCallback<T> callback);
-    void saveItem(@NonNull T item);
+    void saveItem(T item);
+    void removeItem(int position);
     void saveArrayItem(@NonNull SparseArray<T> itemSparseArray, @NonNull SaveItemArrayCallback callback);
     void refreshData();
     int arrayItemCount();

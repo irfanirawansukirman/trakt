@@ -40,9 +40,15 @@ public class InMemoryMoviesRepo implements IMemRepository<Movie> {
     }
 
     @Override
-    public void saveItem(@NonNull Movie item) {
+    public void saveItem(Movie item) {
         memRepoService.saveItem(item);
-        refreshData();
+        cachedTopMovies.append(cachedTopMovies.size() + 1, item);
+        //refreshData();
+    }
+
+    @Override
+    public void removeItem(int position) {
+
     }
 
     @Override

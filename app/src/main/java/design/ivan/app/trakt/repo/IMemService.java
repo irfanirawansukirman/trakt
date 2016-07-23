@@ -18,6 +18,8 @@ public interface IMemService<T>{
 
     void saveItem(T item);
 
+    void removeItem(T item);
+
     void saveItemsArray(@NonNull SparseArray<T> itemSparseArray,
                            @NonNull SaveSparseArrayCallback callback);
 }

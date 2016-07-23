@@ -7,9 +7,7 @@ import android.util.SparseArray;
 import design.ivan.app.trakt.Utility;
 import design.ivan.app.trakt.model.Movie;
 
-/**
- * Created by ivanm on 7/21/16.
- */
+
 public class InMemoryMoviesService implements IMemService<Movie> {
 
     private static ArrayMap<Integer, Movie> MOVIE_SERVICE_DATA = new ArrayMap<>();
@@ -28,6 +26,11 @@ public class InMemoryMoviesService implements IMemService<Movie> {
     @Override
     public void saveItem(Movie item) {
         MOVIE_SERVICE_DATA.put(item.getIds().getTrakt(), item);
+    }
+
+    @Override
+    public void removeItem(Movie item) {
+
     }
 
     @Override

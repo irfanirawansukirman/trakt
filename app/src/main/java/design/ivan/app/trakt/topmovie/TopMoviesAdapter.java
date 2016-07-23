@@ -1,6 +1,7 @@
 package design.ivan.app.trakt.topmovie;
 
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -17,43 +18,92 @@ import design.ivan.app.trakt.R;
 import design.ivan.app.trakt.model.Movie;
 
 
-public class TopMoviesAdapter extends RecyclerView.Adapter<TopMoviesAdapter.TopMoviesViewHolder>{
-    public static interface HandlerTopMoviesOnClick{
+public class TopMoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+    public interface OnLoadMoreListener {
+        void onLoadMore();
+    }
+    public interface HandlerTopMoviesOnClick{
         void OnClickItem(String id);
     }
-
+    private static final int VIEW_ITEM = 1;
+    private static final int VIEW_PROG = 0;
+    private int visibleThreshold = 2;
+    private int totalItemCount;
+    private int lastVisibleItem;
+    private boolean loading;
+    private OnLoadMoreListener onLoadMoreListener;
     private SparseArray<Movie> movieSparseArray;
     private HandlerTopMoviesOnClick handlerOnClick;
     private String urlThumb;
-    public TopMoviesAdapter(HandlerTopMoviesOnClick handler) {
+
+    public TopMoviesAdapter(RecyclerView recyclerView, HandlerTopMoviesOnClick handler) {
         handlerOnClick = handler;
-    }
 
-    @Override
-    public TopMoviesViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
-    {
-        if ( viewGroup instanceof RecyclerView )
-        {
-            int layoutId = R.layout.item_top_movie;
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(layoutId, viewGroup, false);
-            return new TopMoviesViewHolder(view);
+        if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+            final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    totalItemCount = linearLayoutManager.getItemCount();
+                    lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                    if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                        // End has been reached
+                        // Do something
+                        if (onLoadMoreListener != null) {
+                            onLoadMoreListener.onLoadMore();
+                        }
+                        loading = true;
+                    }
+                }
+            });
         }
-        throw  new RuntimeException("Something went wrong creating View Holder");
     }
 
     @Override
-    public void onBindViewHolder(TopMoviesViewHolder holder, int position)
-    {
-        Movie movie = movieSparseArray.valueAt(position);
-        holder.itemTitle.setText(movie.getTitle());
-        holder.itemYear.setText(movie.getYear().toString());
-        holder.itemReleased.setText(movie.getReleased());
-        urlThumb = movie.getImages().getPoster().getThumb();
-        Glide.with(holder.itemThumb.getContext())
-                .load(urlThumb)
-                .error(ContextCompat.getDrawable(holder.itemThumb.getContext(), R.drawable.ic_filler_drawable_60dp))
-                .into(holder.itemThumb);
+    public int getItemViewType(int position) {
+        return movieSparseArray.valueAt(position) != null ? VIEW_ITEM : VIEW_PROG;
+    }
 
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
+    {
+        View view;
+        RecyclerView.ViewHolder viewHolder;
+        if(viewType == VIEW_ITEM) {
+            view = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.item_top_movie, viewGroup, false);
+            viewHolder = new TopMoviesViewHolder(view);
+        } else {
+            view = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.item_progress_bar, viewGroup, false);
+            viewHolder = new ProgressViewHolder(view);
+        }
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
+    {
+        if(holder.getItemViewType() == VIEW_ITEM){
+            TopMoviesViewHolder viewHolder = (TopMoviesViewHolder)holder;
+            Movie movie = movieSparseArray.valueAt(position);
+            viewHolder.itemTitle.setText(movie.getTitle());
+            viewHolder.itemYear.setText(movie.getYear().toString());
+            viewHolder.itemReleased.setText(movie.getReleased());
+            urlThumb = movie.getImages().getPoster().getThumb();
+            Glide.with(viewHolder.itemThumb.getContext())
+                    .load(urlThumb)
+                    .error(ContextCompat.getDrawable(viewHolder.itemThumb.getContext(), R.drawable.ic_filler_drawable_60dp))
+                    .into(viewHolder.itemThumb);
+        }
+    }
+
+    @Override
+    public int getItemCount()
+    {
+        if(movieSparseArray == null) return 0;
+        return movieSparseArray.size();
     }
 
     public void loadDataSet(SparseArray<Movie> movieSparseArray)
@@ -62,11 +112,12 @@ public class TopMoviesAdapter extends RecyclerView.Adapter<TopMoviesAdapter.TopM
         notifyDataSetChanged();
     }
 
-    @Override
-    public int getItemCount()
-    {
-        if(movieSparseArray == null) return 0;
-        return movieSparseArray.size();
+    public void setLoaded() {
+        loading = false;
+    }
+
+    public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
+        this.onLoadMoreListener = onLoadMoreListener;
     }
 
     public class TopMoviesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
@@ -88,6 +139,14 @@ public class TopMoviesAdapter extends RecyclerView.Adapter<TopMoviesAdapter.TopM
         @Override
         public void onClick(View view) {
 
+        }
+    }
+
+    public static class ProgressViewHolder extends RecyclerView.ViewHolder {
+        //public ProgressBar progressBar;
+
+        public ProgressViewHolder(View v) {
+            super(v);
         }
     }
 }

@@ -21,7 +21,7 @@ import retrofit2.Response;
 
 
 public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Callback<List<Movie>>
-        , MainPresenter.NetworkChangedHandler {
+        , MainPresenter.NetworkChangedHandler, TopMoviesAdapter.OnLoadMoreListener {
 
     private static final String TAG = "TopMoviesPresenter";
     ITopMoviesContract.TopMoviesView topMoviesView;
@@ -91,7 +91,6 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
     // +++ End ITopMoviesContract.ActionListener implementation +++
 
     // *** Retrofit 2 callback implementation ***
-
     @Override
     public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
         Log.d(TAG, "onResponse: response = " + response.body());
@@ -121,6 +120,7 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
     public void onFailure(Call<List<Movie>> call, Throwable t) {
         Log.d(TAG, "onFailure: t = " + t);
     }
+    // +++ End Retrofit 2 callback implementation +++
 
     // *** MainPresenter.NetworkChangedHandler implementation +++
     @Override
@@ -128,5 +128,15 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
         getTopMovies(false);
     }
 
-    // +++ End Retrofit 2 callback implementation +++
+    // *** TopMoviesAdapter.OnLoadMoreListener implementation +++
+    @Override
+    public void onLoadMore() {
+        //add progress item
+        topMoviesRepo.saveItem(null);
+        topMoviesView.notifyItemInserted();
+
+        // TODO network request for next page 2 and so on
+        //remove progress item
+
+    }
 }
