@@ -18,6 +18,8 @@ public interface IMainContract {
     {
         void setupListeners(Activity main);
         void clearListeners(Activity main);
+        void registerNetworkHandler(MainPresenter.NetworkChangedHandler networkChangedHandler);
+        void unregisterNetworkHandler();
     }
 
 }

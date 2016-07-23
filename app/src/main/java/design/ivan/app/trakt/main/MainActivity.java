@@ -158,6 +158,10 @@ public class MainActivity extends AppCompatActivity implements IMainContract.Mai
 
     // +++ End MainView implementation +++
 
+    public IMainContract.ActionListener getActionListener(){
+        return actionListener;
+    }
+
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 

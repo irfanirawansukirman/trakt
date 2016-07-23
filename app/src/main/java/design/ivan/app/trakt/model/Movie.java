@@ -5,6 +5,7 @@ public class Movie {
     Ids ids;
     String overview;
     Images images;
+    String released;
 
     public Movie() {
     }
@@ -47,5 +48,13 @@ public class Movie {
 
     public void setImages(Images images) {
         this.images = images;
+    }
+
+    public String getReleased() {
+        return released;
+    }
+
+    public void setReleased(String released) {
+        this.released = released;
     }
 }

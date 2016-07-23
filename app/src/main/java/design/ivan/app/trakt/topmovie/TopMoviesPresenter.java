@@ -10,6 +10,8 @@ import java.util.List;
 
 import design.ivan.app.trakt.R;
 import design.ivan.app.trakt.Utility;
+import design.ivan.app.trakt.main.MainActivity;
+import design.ivan.app.trakt.main.MainPresenter;
 import design.ivan.app.trakt.model.Movie;
 import design.ivan.app.trakt.network.ITraktAPIService;
 import design.ivan.app.trakt.repo.IMemRepository;
@@ -18,7 +20,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Callback<List<Movie>> {
+public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Callback<List<Movie>>
+        , MainPresenter.NetworkChangedHandler {
 
     private static final String TAG = "TopMoviesPresenter";
     ITopMoviesContract.TopMoviesView topMoviesView;
@@ -35,12 +38,12 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
 
     @Override
     public void setupListeners(Activity main) {
-
+        ((MainActivity)main).getActionListener().registerNetworkHandler(this);
     }
 
     @Override
     public void clearListeners(Activity main) {
-
+        ((MainActivity)main).getActionListener().unregisterNetworkHandler();
     }
 
     @Override
@@ -68,7 +71,7 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
             public void onItemsLoaded(SparseArray<Movie> itemsSparseArray) {
                 Log.d(TAG, "onItemsLoaded: " + itemsSparseArray);
                 //TODO load to recycler view adapter
-
+                topMoviesView.loadData(itemsSparseArray);
             }
         });
     }
@@ -117,6 +120,12 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
     @Override
     public void onFailure(Call<List<Movie>> call, Throwable t) {
         Log.d(TAG, "onFailure: t = " + t);
+    }
+
+    // *** MainPresenter.NetworkChangedHandler implementation +++
+    @Override
+    public void onNetworkChange(boolean connected) {
+        getTopMovies(false);
     }
 
     // +++ End Retrofit 2 callback implementation +++

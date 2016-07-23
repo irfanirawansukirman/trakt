@@ -10,9 +10,13 @@ import design.ivan.app.trakt.network.NetworkChangeReceiver;
 
 public class MainPresenter implements IMainContract.ActionListener,
         NetworkChangeReceiver.NetworkChangeListener {
-
+    public interface NetworkChangedHandler{
+        void onNetworkChange(boolean connected);
+    }
     IMainContract.MainView mainView;
     private NetworkChangeReceiver networkChangeReceiver;
+    private static final String TAG = "MainPresenter";
+    private NetworkChangedHandler networkChangedHandler;
 
     public MainPresenter(IMainContract.MainView mainView) {
         this.mainView = mainView;
@@ -31,6 +35,7 @@ public class MainPresenter implements IMainContract.ActionListener,
             filter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
             main.registerReceiver(networkChangeReceiver, filter);
         }
+
     }
 
     @Override
@@ -42,6 +47,16 @@ public class MainPresenter implements IMainContract.ActionListener,
         }
     }
 
+    @Override
+    public void registerNetworkHandler(NetworkChangedHandler networkChangedHandler) {
+        this.networkChangedHandler = networkChangedHandler;
+    }
+
+    @Override
+    public void unregisterNetworkHandler() {
+        networkChangedHandler = null;
+    }
+
     // +++ End ActionListener implementation +++//
 
     // *** NetworkChangeListener implementation *** //
@@ -50,7 +65,8 @@ public class MainPresenter implements IMainContract.ActionListener,
     public void onNetworkChange(boolean connected) {
         if(connected) {
             mainView.showSnackbar(R.string.online);
-            //getRSSFeed(false);
+            //TODO tell fragment is time to search for movies if it is necessary
+            if(networkChangedHandler != null)networkChangedHandler.onNetworkChange(connected);
         } else {
             mainView.showSnackbar(R.string.offline, true);
         }

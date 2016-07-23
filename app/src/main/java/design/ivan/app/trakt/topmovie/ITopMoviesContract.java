@@ -2,6 +2,9 @@ package design.ivan.app.trakt.topmovie;
 
 import android.app.Activity;
 import android.support.annotation.StringRes;
+import android.util.SparseArray;
+
+import design.ivan.app.trakt.model.Movie;
 
 public interface ITopMoviesContract {
     interface TopMoviesView
@@ -15,6 +18,8 @@ public interface ITopMoviesContract {
         void hideMessage();
         void showMessage(@StringRes int message);
         void enableUI(boolean activate);
+        void loadData(SparseArray<Movie> movieSparseArray);
+        int adapterItemCount();
     }
     interface ActionListener
     {
@@ -24,6 +29,5 @@ public interface ITopMoviesContract {
         void loadMovies();
         void initConnection();
         void doWebRequest();
-
     }
 }

@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import design.ivan.app.trakt.R;
+import design.ivan.app.trakt.model.Movie;
 import design.ivan.app.trakt.repo.RepoLoader;
 
 
@@ -26,7 +28,7 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
     private static final String TAG = "TopMoviesFragment";
     private TopMoviesAdapter topMoviesAdapter;
     private Unbinder unbinder;
-    TopMoviesPresenter actionListener;
+    public TopMoviesPresenter actionListener;
     @BindView(R.id.top_movies_list)
     RecyclerView listTopMovies;
     @BindView(R.id.top_movies_message)
@@ -50,11 +52,14 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
         return rootView;
     }
 
+
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         showMessage(R.string.no_data);
         actionListener.getTopMovies(false);
+        actionListener.setupListeners(getActivity());
     }
 
     @Override
@@ -81,6 +86,7 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
         super.onDestroyView();
         Log.d(TAG, "onDestroyView: ");
         unbinder.unbind();
+        actionListener.clearListeners(getActivity());
     }
 
     // *** HandlerTopMoviesOnClick implementation ***
@@ -156,6 +162,24 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
             messageTopMovies.setVisibility(View.VISIBLE);
             listTopMovies.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void loadData(SparseArray<Movie> movieSparseArray) {
+        if(topMoviesAdapter == null){
+            Log.d(TAG, "loadData: adapter is not found");
+            return;
+        }
+        hideMessage();
+        topMoviesAdapter.loadDataSet(movieSparseArray);
+    }
+
+    @Override
+    public int adapterItemCount() {
+        if(topMoviesAdapter != null){
+            return topMoviesAdapter.getItemCount();
+        }
+        return 0;
     }
 
     // +++ End TopMoviesView implementation +++
