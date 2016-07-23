@@ -67,6 +67,8 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
             @Override
             public void onItemsLoaded(SparseArray<Movie> itemsSparseArray) {
                 Log.d(TAG, "onItemsLoaded: " + itemsSparseArray);
+                //TODO load to recycler view adapter
+
             }
         });
     }
