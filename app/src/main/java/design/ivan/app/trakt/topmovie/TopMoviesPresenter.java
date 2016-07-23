@@ -90,6 +90,12 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
         call.enqueue(this);
     }
 
+    @Override
+    public void cancelWebRequest() {
+        if(call != null && call.isExecuted())
+            call.cancel();
+    }
+
     // +++ End ITopMoviesContract.ActionListener implementation +++
 
     // *** Retrofit 2 callback implementation ***
@@ -103,10 +109,10 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
         });
 
         if(response.isSuccessful()){
-            ArrayList<Movie> forecastList = (ArrayList<Movie>) response.body();
-            if(forecastList.size()<=0)
+            ArrayList<Movie> movies = (ArrayList<Movie>) response.body();
+            if(movies.size()<=0)
                 return;
-            SparseArray<Movie> movieSparseArray = Utility.prepareSparseArray(forecastList);
+            SparseArray<Movie> movieSparseArray = Utility.prepareSparseArray(movies);
 
             if(pageCounter == 0){
                 //first time loading pages
@@ -136,6 +142,11 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
     @Override
     public void onFailure(Call<List<Movie>> call, Throwable t) {
         Log.d(TAG, "onFailure: t = " + t);
+        ((Fragment)topMoviesView).getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                topMoviesView.showSnackbar(R.string.something_went_wrong);
+            }
+        });
     }
     // +++ End Retrofit 2 callback implementation +++
 

@@ -80,13 +80,13 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
     public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause: ");
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
         Log.d(TAG, "onStop: ");
+        actionListener.cancelWebRequest();
     }
 
     @Override

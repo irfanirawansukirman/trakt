@@ -33,5 +33,6 @@ public interface ITopMoviesContract {
         void loadMovies();
         void initConnection();
         void doWebRequest();
+        void cancelWebRequest();
     }
 }

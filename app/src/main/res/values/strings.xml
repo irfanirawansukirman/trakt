@@ -12,7 +12,7 @@
     <string name="syncing">Syncing your data</string>
     <!-- Top Movies -->
     <string name="no_data">Nothing to show</string>
-
+    <string name="something_went_wrong">Something went wrong while syncing movies</string>
     <!-- Search -->
     <string name="hint_type">Type a name</string>
 </resources>

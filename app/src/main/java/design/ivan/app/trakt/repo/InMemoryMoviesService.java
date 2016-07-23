@@ -9,9 +9,7 @@ import design.ivan.app.trakt.model.Movie;
 
 
 public class InMemoryMoviesService implements IMemService<Movie> {
-
     private static ArrayMap<Integer, Movie> MOVIE_SERVICE_DATA = new ArrayMap<>();
-
 
     @Override
     public void getAllSavedItems(MemServiceCallback<SparseArray<Movie>> callback) {

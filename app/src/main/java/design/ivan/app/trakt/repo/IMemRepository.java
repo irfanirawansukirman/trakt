@@ -22,7 +22,7 @@ public interface IMemRepository<T> {
         void onSavedArray(boolean saved);
     }
 
-    void getItemList(@NonNull LoadItemsCallback<T> callback);
+    void getItemList(@NonNull final LoadItemsCallback<T> callback);
     void getItem(@NonNull Integer itemId, @NonNull GetItemCallback<T> callback);
     void saveItem(T item);
     void removeItem(int position);

@@ -14,6 +14,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import design.ivan.app.trakt.R;
+import design.ivan.app.trakt.repo.RepoLoader;
 
 public class SearchFragment extends Fragment implements ISearchContract.SearchView{
 
@@ -22,6 +23,7 @@ public class SearchFragment extends Fragment implements ISearchContract.SearchVi
     private SearchPresenter actionListener;
     @BindView(R.id.search_input)
     TextInputEditText searchInput;
+    private View rootView;
 
     public static SearchFragment newInstance()
     {
@@ -32,10 +34,10 @@ public class SearchFragment extends Fragment implements ISearchContract.SearchVi
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: ");
-        View rootView = inflater.inflate(R.layout.frag_search, container, false);
+        rootView = inflater.inflate(R.layout.frag_search, container, false);
         unbinder = ButterKnife.bind(this, rootView);
-        //initListUi();
-        actionListener = new SearchPresenter(this);
+        actionListener = new SearchPresenter(RepoLoader.loadMemSearchRepository(), this);
+        initListUi();
         searchInput.addTextChangedListener(actionListener);
         actionListener.setupSearchRequest();
         return rootView;

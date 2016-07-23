@@ -9,6 +9,7 @@ import java.util.List;
 
 import design.ivan.app.trakt.model.SearchResult;
 import design.ivan.app.trakt.network.ITraktAPIService;
+import design.ivan.app.trakt.repo.IMemRepository;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -21,8 +22,10 @@ public class SearchPresenter implements ISearchContract.ActionListener,
     ISearchContract.SearchView searchView;
     private ITraktAPIService traktAPIService;
     private Call<List<SearchResult>> call;
+    private IMemRepository<SearchResult> searchRepo;
 
-    public SearchPresenter(ISearchContract.SearchView searchView) {
+    public SearchPresenter(IMemRepository<SearchResult> searchRepo, ISearchContract.SearchView searchView) {
+        this.searchRepo = searchRepo;
         this.searchView = searchView;
     }
 
@@ -54,7 +57,7 @@ public class SearchPresenter implements ISearchContract.ActionListener,
         //Log.d(TAG, "doSearch: ");
         if(call != null)
             call.cancel();
-        call = traktAPIService.searchMovie(searchString, EXTENDED_FULL);
+        call = traktAPIService.searchMovie(searchString);
         call.enqueue(this);
 
 

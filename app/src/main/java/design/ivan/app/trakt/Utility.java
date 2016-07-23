@@ -8,8 +8,6 @@ import android.util.SparseArray;
 
 import java.util.ArrayList;
 
-import design.ivan.app.trakt.model.Movie;
-
 public class Utility {
     public static boolean isAppOnline(Context context){
         //get network info
@@ -21,7 +19,7 @@ public class Utility {
                 activeNetwork.isConnectedOrConnecting();
     }
 
-    public  static <T> SparseArray<T> arrayMapToSparseArray(ArrayMap<Integer, T> incomingData){
+    public static <T> SparseArray<T> arrayMapToSparseArray(ArrayMap<Integer, T> incomingData){
         SparseArray<T> outputSparseArray = new SparseArray<>();
         T item;
         //faster for loop iteration if we stick to regular for loop
@@ -32,12 +30,12 @@ public class Utility {
         return outputSparseArray;
     }
 
-    public static SparseArray<Movie> prepareSparseArray(ArrayList<Movie> movieArrayList){
-        Movie currentMovie;
-        SparseArray<Movie> sparseArray = new SparseArray<>();
+    public static <T> SparseArray<T> prepareSparseArray(ArrayList<T> movieArrayList){
+        T currentItem;
+        SparseArray<T> sparseArray = new SparseArray<>();
         for (int i = 0; i < movieArrayList.size(); i++) {
-            currentMovie = movieArrayList.get(i);
-            sparseArray.put(i, currentMovie);
+            currentItem = movieArrayList.get(i);
+            sparseArray.put(i, currentItem);
         }
         return sparseArray;
     }
