@@ -28,6 +28,7 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
     IMemRepository<Movie> topMoviesRepo;
     private ITraktAPIService traktAPIService;
     private Call<List<Movie>> call;
+    private int pageCounter = 0;
 
     public TopMoviesPresenter(IMemRepository<Movie> topMoviesRepo, ITopMoviesContract.TopMoviesView topMoviesView) {
         this.topMoviesView = topMoviesView;
@@ -78,13 +79,14 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
 
     @Override
     public void initConnection() {
-        traktAPIService = ITraktAPIService.retrofit.create(ITraktAPIService.class);
+        if(traktAPIService == null)
+            traktAPIService = ITraktAPIService.retrofit.create(ITraktAPIService.class);
     }
 
     @Override
     public void doWebRequest() {
         topMoviesView.showSnackbar(R.string.syncing, true);
-        call = traktAPIService.getTopMovies();
+        call = traktAPIService.getTopMovies(pageCounter + 1);
         call.enqueue(this);
     }
 
@@ -106,13 +108,28 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
                 return;
             SparseArray<Movie> movieSparseArray = Utility.prepareSparseArray(forecastList);
 
-            topMoviesRepo.saveArrayItem(movieSparseArray, new IMemRepository.SaveItemArrayCallback() {
-                @Override
-                public void onSavedArray(boolean saved) {
-                    Log.d(TAG, "onSavedArray: Forecasts cached");
-                    loadMovies();
-                }
-            });
+            if(pageCounter == 0){
+                //first time loading pages
+                topMoviesRepo.saveArrayItem(movieSparseArray, new IMemRepository.SaveItemArrayCallback() {
+                    @Override
+                    public void onSavedArray(boolean saved) {
+                        Log.d(TAG, "onSavedArray: Forecasts cached");
+                        pageCounter += 1; //update page counter
+                        loadMovies();
+                    }
+                });
+                return;
+            }
+
+            topMoviesRepo.removeItem(topMoviesView.adapterItemCount() - 1);
+            topMoviesView.notifyItemRemoved();
+            //add items one by one
+            for (int i = 0; i < 10; i++) {
+                topMoviesRepo.saveItem(movieSparseArray.valueAt(i));
+                topMoviesView.notifyItemInserted();
+            }
+            topMoviesView.setLoaded();
+
         }
     }
 
@@ -131,12 +148,8 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
     // *** TopMoviesAdapter.OnLoadMoreListener implementation +++
     @Override
     public void onLoadMore() {
-        //add progress item
         topMoviesRepo.saveItem(null);
         topMoviesView.notifyItemInserted();
-
-        // TODO network request for next page 2 and so on
-        //remove progress item
-
+        getTopMovies(true);
     }
 }

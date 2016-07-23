@@ -41,14 +41,14 @@ public class InMemoryMoviesRepo implements IMemRepository<Movie> {
 
     @Override
     public void saveItem(Movie item) {
-        memRepoService.saveItem(item);
+        //memRepoService.saveItem(item); //dont tell the map array it doesnt need to know
         cachedTopMovies.append(cachedTopMovies.size() + 1, item);
         //refreshData();
     }
 
     @Override
     public void removeItem(int position) {
-
+        cachedTopMovies.removeAt(position);
     }
 
     @Override

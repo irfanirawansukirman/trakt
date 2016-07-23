@@ -16,8 +16,8 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface ITraktAPIService {
-    @GET("movies/popular?extended=images,full&page=1&limit=10")
-    Call<List<Movie>> getTopMovies();
+    @GET("movies/popular?extended=images,full&limit=10")
+    Call<List<Movie>> getTopMovies(@Query("page") int page);
 
     @GET("search/movie")
     Call<List<SearchResult>> searchMovie(@Query("query") String movieName, @Query("extended") String extension);

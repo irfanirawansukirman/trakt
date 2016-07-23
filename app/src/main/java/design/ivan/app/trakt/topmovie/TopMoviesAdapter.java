@@ -94,6 +94,7 @@ public class TopMoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             urlThumb = movie.getImages().getPoster().getThumb();
             Glide.with(viewHolder.itemThumb.getContext())
                     .load(urlThumb)
+                    .placeholder(ContextCompat.getDrawable(viewHolder.itemThumb.getContext(), R.drawable.ic_landscape_black_60dp))
                     .error(ContextCompat.getDrawable(viewHolder.itemThumb.getContext(), R.drawable.ic_filler_drawable_60dp))
                     .into(viewHolder.itemThumb);
         }

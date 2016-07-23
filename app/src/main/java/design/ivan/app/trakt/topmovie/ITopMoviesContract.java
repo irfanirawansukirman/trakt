@@ -10,7 +10,8 @@ public interface ITopMoviesContract {
     interface TopMoviesView
     {
         void initListUi();
-        void goToPreviousPosition();
+        void getVisiblePosition();
+        void goToPostion();
         void showSnackbar(@StringRes int resMessage);
         void showSnackbar(@StringRes int resMessage, boolean alwaysOn);
         void hideSnackbar();

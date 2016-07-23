@@ -26,8 +26,10 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
         ITopMoviesContract.TopMoviesView{
 
     private static final String TAG = "TopMoviesFragment";
+    private static final String KEY_SCROLL = "trakt_scroll_position";
     private TopMoviesAdapter topMoviesAdapter;
     private Unbinder unbinder;
+    private int scrollPosition;
     public TopMoviesPresenter actionListener;
     @BindView(R.id.top_movies_list)
     RecyclerView listTopMovies;
@@ -48,6 +50,10 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
         rootView = inflater.inflate(R.layout.frag_top_movie, container, false);
         unbinder = ButterKnife.bind(this, rootView);
         //initListUi()
+        if (savedInstanceState != null) {
+            // Restore saved layout manager type.
+            scrollPosition = savedInstanceState.getInt(KEY_SCROLL, 0);
+        }
         actionListener = new TopMoviesPresenter(RepoLoader.loadMemMovieRepository(), this);
         initListUi();
         return rootView;
@@ -67,13 +73,14 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: ");
-        goToPreviousPosition();
+        goToPostion();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause: ");
+
     }
 
     @Override
@@ -88,6 +95,14 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
         Log.d(TAG, "onDestroyView: ");
         unbinder.unbind();
         actionListener.clearListeners(getActivity());
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        getVisiblePosition();
+        if(scrollPosition > 0)
+            outState.putInt(KEY_SCROLL, scrollPosition );
+        super.onSaveInstanceState(outState);
     }
 
     // *** HandlerTopMoviesOnClick implementation ***
@@ -107,12 +122,23 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
     }
 
     @Override
-    public void goToPreviousPosition() {
-
+    public void getVisiblePosition() {
         if (listTopMovies.getLayoutManager() != null) {
-            int scrollPosition = ((LinearLayoutManager) listTopMovies.getLayoutManager())
-                    .findFirstCompletelyVisibleItemPosition();
-            listTopMovies.scrollToPosition(scrollPosition);
+            if(adapterItemCount() > 0)
+            {
+                scrollPosition = ((LinearLayoutManager) listTopMovies.getLayoutManager())
+                        .findFirstCompletelyVisibleItemPosition();
+            }
+        }
+    }
+
+    @Override
+    public void goToPostion() {
+        if (listTopMovies.getLayoutManager() != null) {
+            if (adapterItemCount() > 0 && scrollPosition > 0) {
+                Log.d(TAG, "goToPostion: ");
+                listTopMovies.scrollToPosition(scrollPosition);
+            }
         }
     }
 
