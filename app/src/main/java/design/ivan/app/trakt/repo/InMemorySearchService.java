@@ -8,21 +8,21 @@ import design.ivan.app.trakt.Utility;
 import design.ivan.app.trakt.model.SearchResult;
 
 public class InMemorySearchService implements IMemService<SearchResult> {
-    private static ArrayMap<Integer, SearchResult> MOVIE_SERVICE_DATA = new ArrayMap<>();
+    private static ArrayMap<Integer, SearchResult> SEARCH_SERVICE_DATA = new ArrayMap<>();
 
     @Override
     public void getAllSavedItems(MemServiceCallback<SparseArray<SearchResult>> callback) {
-        callback.onLoaded(Utility.arrayMapToSparseArray(MOVIE_SERVICE_DATA));
+        callback.onLoaded(Utility.arrayMapToSparseArray(SEARCH_SERVICE_DATA));
     }
 
     @Override
     public void getItem(Integer itemId, MemServiceCallback<SearchResult> callback) {
-        callback.onLoaded(MOVIE_SERVICE_DATA.get(itemId));
+        callback.onLoaded(SEARCH_SERVICE_DATA.get(itemId));
     }
 
     @Override
     public void saveItem(SearchResult item) {
-        MOVIE_SERVICE_DATA.put(item.getMovie().getIds().getTrakt(), item);
+        SEARCH_SERVICE_DATA.put(item.getMovie().getIds().getTrakt(), item);
     }
 
     @Override
@@ -34,9 +34,11 @@ public class InMemorySearchService implements IMemService<SearchResult> {
     public void saveItemsArray(@NonNull SparseArray<SearchResult> itemSparseArray, @NonNull SaveSparseArrayCallback callback) {
         SearchResult result;
         int counter = 0;
+        if(SEARCH_SERVICE_DATA.size() > 0)
+            SEARCH_SERVICE_DATA.clear();
         for (int i = 0; i < itemSparseArray.size(); i++) {
             result = itemSparseArray.valueAt(i);
-            MOVIE_SERVICE_DATA.put(result.getMovie().getIds().getTrakt(), result);
+            SEARCH_SERVICE_DATA.put(result.getMovie().getIds().getTrakt(), result);
             counter++;
         }
         if(counter == itemSparseArray.size()){

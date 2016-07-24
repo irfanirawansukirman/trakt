@@ -49,7 +49,6 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
         Log.d(TAG, "onCreateView: ");
         rootView = inflater.inflate(R.layout.frag_top_movie, container, false);
         unbinder = ButterKnife.bind(this, rootView);
-        //initListUi()
         if (savedInstanceState != null) {
             // Restore saved layout manager type.
             scrollPosition = savedInstanceState.getInt(KEY_SCROLL, 0);

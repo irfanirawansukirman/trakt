@@ -1,12 +1,17 @@
 package design.ivan.app.trakt.search;
 
 import android.app.Activity;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseArray;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import design.ivan.app.trakt.R;
+import design.ivan.app.trakt.Utility;
 import design.ivan.app.trakt.model.SearchResult;
 import design.ivan.app.trakt.network.ITraktAPIService;
 import design.ivan.app.trakt.repo.IMemRepository;
@@ -53,13 +58,28 @@ public class SearchPresenter implements ISearchContract.ActionListener,
     }
 
     @Override
-    public void doSearch(String searchString) {
-        //Log.d(TAG, "doSearch: ");
+    public void loadSearch() {
+        searchRepo.getItemList(new IMemRepository.LoadItemsCallback<SearchResult>(){
+            @Override
+            public void onItemsLoaded(SparseArray<SearchResult> itemsSparseArray) {
+                Log.d(TAG, "onItemsLoaded: " + itemsSparseArray);
+                searchView.loadData(itemsSparseArray);
+            }
+        });
+    }
+
+    @Override
+    public void doWebSearch(String searchString) {
         if(call != null)
             call.cancel();
+        //TODO show something on UI that we are doing a search
+        searchView.showSnackbar(R.string.searching, true);
         call = traktAPIService.searchMovie(searchString);
         call.enqueue(this);
+    }
 
+    @Override
+    public void cancelWebRequest() {
 
     }
 
@@ -80,7 +100,7 @@ public class SearchPresenter implements ISearchContract.ActionListener,
         String editString = editable.toString();
         if(editString.isEmpty())
             return;
-        doSearch(editable.toString());
+        doWebSearch(editable.toString());
     }
 
     // +++ End TextWatcher implementation +++
@@ -90,11 +110,34 @@ public class SearchPresenter implements ISearchContract.ActionListener,
     @Override
     public void onResponse(Call<List<SearchResult>> call, Response<List<SearchResult>> response) {
         Log.d(TAG, "onResponse: response = " + response.body());
+        ((Fragment)searchView).getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                searchView.hideSnackbar();
+            }
+        });
+        if(response.isSuccessful()){
+            ArrayList<SearchResult> searchResults = (ArrayList<SearchResult>) response.body();
+            if(searchResults.size()<=0)
+                return;
+            SparseArray<SearchResult> searchResultSparseArray = Utility.prepareSparseArray(searchResults);
+            searchRepo.saveArrayItem(searchResultSparseArray, new IMemRepository.SaveItemArrayCallback() {
+                @Override
+                public void onSavedArray(boolean saved) {
+                    Log.d(TAG, "onSavedArray: Forecasts cached");
+                    loadSearch();
+                }
+            });
+        }
     }
 
     @Override
     public void onFailure(Call<List<SearchResult>> call, Throwable t) {
         Log.d(TAG, "onFailure: t = " + t);
+        ((Fragment)searchView).getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                searchView.showSnackbar(R.string.something_went_wrong);
+            }
+        });
     }
 
     // +++ End Retrofit callback implementation +++

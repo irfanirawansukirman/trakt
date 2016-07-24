@@ -2,6 +2,9 @@ package design.ivan.app.trakt.search;
 
 import android.app.Activity;
 import android.support.annotation.StringRes;
+import android.util.SparseArray;
+
+import design.ivan.app.trakt.model.SearchResult;
 
 public interface ISearchContract {
     interface SearchView{
@@ -13,12 +16,16 @@ public interface ISearchContract {
         void hideMessage();
         void showMessage(@StringRes int message);
         void enableUI(boolean activate);
+        void loadData(SparseArray<SearchResult> searchSparse);
+        int adapterItemCount();
     }
     interface ActionListener{
         void setupListeners(Activity main);
         void clearListeners(Activity main);
         void setupSearchRequest();
         void clearSearchRequest();
-        void doSearch(String searchString);
+        void loadSearch();
+        void doWebSearch(String searchString);
+        void cancelWebRequest();
     }
 }

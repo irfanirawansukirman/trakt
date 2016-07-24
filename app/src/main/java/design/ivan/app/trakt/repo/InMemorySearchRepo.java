@@ -26,6 +26,7 @@ public class InMemorySearchRepo implements IMemRepository<SearchResult>{
         } else {
             callback.onItemsLoaded(cachedSearchResult);
         }
+
     }
 
     @Override

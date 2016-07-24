@@ -71,7 +71,6 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
             @Override
             public void onItemsLoaded(SparseArray<Movie> itemsSparseArray) {
                 Log.d(TAG, "onItemsLoaded: " + itemsSparseArray);
-                //TODO load to recycler view adapter
                 topMoviesView.loadData(itemsSparseArray);
             }
         });
@@ -101,7 +100,6 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
     // *** Retrofit 2 callback implementation ***
     @Override
     public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
-        Log.d(TAG, "onResponse: response = " + response.body());
         ((Fragment)topMoviesView).getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 topMoviesView.hideSnackbar();
@@ -120,22 +118,21 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
                     @Override
                     public void onSavedArray(boolean saved) {
                         Log.d(TAG, "onSavedArray: Forecasts cached");
-                        pageCounter += 1; //update page counter
                         loadMovies();
                     }
                 });
-                return;
+            } else {
+                topMoviesRepo.removeItem(topMoviesView.adapterItemCount() - 1);
+                topMoviesView.notifyItemRemoved();
+                //add items one by one
+                for (int i = 0; i < 10; i++) {
+                    topMoviesRepo.saveItem(movieSparseArray.valueAt(i));
+                    topMoviesView.notifyItemInserted();
+                }
+                topMoviesView.setLoaded();
             }
 
-            topMoviesRepo.removeItem(topMoviesView.adapterItemCount() - 1);
-            topMoviesView.notifyItemRemoved();
-            //add items one by one
-            for (int i = 0; i < 10; i++) {
-                topMoviesRepo.saveItem(movieSparseArray.valueAt(i));
-                topMoviesView.notifyItemInserted();
-            }
-            topMoviesView.setLoaded();
-
+            pageCounter += 1;
         }
     }
 

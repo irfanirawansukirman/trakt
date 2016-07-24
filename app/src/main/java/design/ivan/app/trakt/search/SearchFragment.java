@@ -3,9 +3,13 @@ package design.ivan.app.trakt.search;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,16 +18,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import design.ivan.app.trakt.R;
+import design.ivan.app.trakt.model.SearchResult;
 import design.ivan.app.trakt.repo.RepoLoader;
 
-public class SearchFragment extends Fragment implements ISearchContract.SearchView{
-
+public class SearchFragment extends Fragment implements ISearchContract.SearchView
+        , SearchAdapter.HandlerSearchOnClick{
     private static final String TAG = "SearchFragment";
     private Unbinder unbinder;
     private SearchPresenter actionListener;
+    private SearchAdapter searchAdapter;
     @BindView(R.id.search_input)
     TextInputEditText searchInput;
+    @BindView(R.id.search_recycler)
+    RecyclerView searchList;
     private View rootView;
+    private Snackbar snackbar;
 
     public static SearchFragment newInstance()
     {
@@ -74,22 +83,31 @@ public class SearchFragment extends Fragment implements ISearchContract.SearchVi
 
     @Override
     public void initListUi() {
-
+        searchList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        searchAdapter = new SearchAdapter(this);
+        searchList.setAdapter(searchAdapter);
     }
 
     @Override
     public void showSnackbar(@StringRes int resMessage) {
-
+        showSnackbar(resMessage, false);
     }
 
     @Override
     public void showSnackbar(@StringRes int resMessage, boolean alwaysOn) {
-
+        if(alwaysOn){
+            snackbar = Snackbar.make(rootView, resMessage, Snackbar.LENGTH_INDEFINITE);
+        } else {
+            snackbar = Snackbar.make(rootView, resMessage, Snackbar.LENGTH_LONG);
+        }
+        snackbar.show();
     }
 
     @Override
     public void hideSnackbar() {
-
+        if(snackbar == null)
+            return;
+        snackbar.dismiss();
     }
 
     @Override
@@ -112,6 +130,30 @@ public class SearchFragment extends Fragment implements ISearchContract.SearchVi
 
     }
 
+    @Override
+    public void loadData(SparseArray<SearchResult> searchSparse) {
+        if(searchAdapter == null){
+            Log.d(TAG, "loadData: adapter is not found");
+            return;
+        }
+        searchAdapter.loadDataSet(searchSparse);
+    }
+
+    @Override
+    public int adapterItemCount() {
+        if(searchAdapter != null){
+            return searchAdapter.getItemCount();
+        }
+        return 0;
+    }
+
     // +++ End SearchView implementation +++
+
+    // *** SearchAdapter.HandlerSearchOnClick impelementation +++
+    @Override
+    public void OnClickItem(String id) {
+
+    }
+
 
 }
