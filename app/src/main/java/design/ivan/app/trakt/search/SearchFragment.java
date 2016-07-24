@@ -53,6 +53,12 @@ public class SearchFragment extends Fragment implements ISearchContract.SearchVi
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: ");
@@ -84,8 +90,9 @@ public class SearchFragment extends Fragment implements ISearchContract.SearchVi
     @Override
     public void initListUi() {
         searchList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        searchAdapter = new SearchAdapter(this);
+        searchAdapter = new SearchAdapter(searchList, this);
         searchList.setAdapter(searchAdapter);
+        searchAdapter.setOnLoadMoreListener(actionListener);
     }
 
     @Override
@@ -145,6 +152,21 @@ public class SearchFragment extends Fragment implements ISearchContract.SearchVi
             return searchAdapter.getItemCount();
         }
         return 0;
+    }
+
+    @Override
+    public void notifyItemInserted() {
+        searchAdapter.notifyItemInserted(searchAdapter.getItemCount() - 1);
+    }
+
+    @Override
+    public void notifyItemRemoved() {
+        searchAdapter.notifyItemRemoved(searchAdapter.getItemCount());
+    }
+
+    @Override
+    public void setLoaded() {
+        searchAdapter.setLoaded();
     }
 
     // +++ End SearchView implementation +++

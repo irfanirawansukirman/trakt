@@ -89,7 +89,7 @@ public class TopMoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             TopMoviesViewHolder viewHolder = (TopMoviesViewHolder)holder;
             Movie movie = movieSparseArray.valueAt(position);
             viewHolder.itemTitle.setText(movie.getTitle());
-            viewHolder.itemYear.setText(movie.getYear().toString());
+            if(movie.getYear() != null)viewHolder.itemYear.setText(movie.getYear().toString());
             viewHolder.itemReleased.setText(movie.getReleased());
             urlThumb = movie.getImages().getPoster().getThumb();
             Glide.with(viewHolder.itemThumb.getContext())
@@ -121,16 +121,16 @@ public class TopMoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.onLoadMoreListener = onLoadMoreListener;
     }
 
-    public class TopMoviesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    public static class TopMoviesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         @BindView(R.id.top_movie_item_thumb)
-        ImageView itemThumb;
+        public ImageView itemThumb;
         @BindView(R.id.top_movie_item_title)
-        TextView itemTitle;
+        public TextView itemTitle;
         @BindView(R.id.top_movie_item_year)
-        TextView itemYear;
+        public TextView itemYear;
         @BindView(R.id.top_movie_item_released)
-        TextView itemReleased;
+        public TextView itemReleased;
         public TopMoviesViewHolder(View itemView)
         {
             super(itemView);

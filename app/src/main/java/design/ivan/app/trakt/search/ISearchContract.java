@@ -18,6 +18,9 @@ public interface ISearchContract {
         void enableUI(boolean activate);
         void loadData(SparseArray<SearchResult> searchSparse);
         int adapterItemCount();
+        void notifyItemInserted();
+        void notifyItemRemoved();
+        void setLoaded();
     }
     interface ActionListener{
         void setupListeners(Activity main);
@@ -25,6 +28,7 @@ public interface ISearchContract {
         void setupSearchRequest();
         void clearSearchRequest();
         void loadSearch();
+        void doWebSearch(String searchString, boolean isNewSearch);
         void doWebSearch(String searchString);
         void cancelWebRequest();
     }

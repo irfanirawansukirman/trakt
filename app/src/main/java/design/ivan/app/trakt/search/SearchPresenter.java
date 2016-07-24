@@ -15,19 +15,21 @@ import design.ivan.app.trakt.Utility;
 import design.ivan.app.trakt.model.SearchResult;
 import design.ivan.app.trakt.network.ITraktAPIService;
 import design.ivan.app.trakt.repo.IMemRepository;
+import design.ivan.app.trakt.topmovie.TopMoviesAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SearchPresenter implements ISearchContract.ActionListener,
-        TextWatcher, Callback<List<SearchResult>> {
+        TextWatcher, Callback<List<SearchResult>>, TopMoviesAdapter.OnLoadMoreListener {
 
     private static final String TAG = "SearchPresenter";
-    private static final String EXTENDED_FULL = "images,full";
     ISearchContract.SearchView searchView;
     private ITraktAPIService traktAPIService;
     private Call<List<SearchResult>> call;
     private IMemRepository<SearchResult> searchRepo;
+    private int pageCounter = 0;
+    private String stringToSearch;
 
     public SearchPresenter(IMemRepository<SearchResult> searchRepo, ISearchContract.SearchView searchView) {
         this.searchRepo = searchRepo;
@@ -69,13 +71,22 @@ public class SearchPresenter implements ISearchContract.ActionListener,
     }
 
     @Override
-    public void doWebSearch(String searchString) {
+    public void doWebSearch(String searchString, boolean isNewSearch) {
         if(call != null)
             call.cancel();
-        //TODO show something on UI that we are doing a search
+
         searchView.showSnackbar(R.string.searching, true);
-        call = traktAPIService.searchMovie(searchString);
+
+        if(isNewSearch)
+            pageCounter = 0;
+
+        call = traktAPIService.searchMovie(searchString, pageCounter + 1);
         call.enqueue(this);
+    }
+
+    @Override
+    public void doWebSearch(String searchString) {
+        doWebSearch(searchString, false);
     }
 
     @Override
@@ -97,10 +108,10 @@ public class SearchPresenter implements ISearchContract.ActionListener,
 
     @Override
     public void afterTextChanged(Editable editable) {
-        String editString = editable.toString();
-        if(editString.isEmpty())
+        stringToSearch = editable.toString();
+        if(stringToSearch.isEmpty())
             return;
-        doWebSearch(editable.toString());
+        doWebSearch(stringToSearch, true);
     }
 
     // +++ End TextWatcher implementation +++
@@ -120,13 +131,28 @@ public class SearchPresenter implements ISearchContract.ActionListener,
             if(searchResults.size()<=0)
                 return;
             SparseArray<SearchResult> searchResultSparseArray = Utility.prepareSparseArray(searchResults);
-            searchRepo.saveArrayItem(searchResultSparseArray, new IMemRepository.SaveItemArrayCallback() {
-                @Override
-                public void onSavedArray(boolean saved) {
-                    Log.d(TAG, "onSavedArray: Forecasts cached");
-                    loadSearch();
+
+            if(pageCounter == 0){
+                //first time loading pages
+                searchRepo.saveArrayItem(searchResultSparseArray, new IMemRepository.SaveItemArrayCallback() {
+                    @Override
+                    public void onSavedArray(boolean saved) {
+                        Log.d(TAG, "onSavedArray: searches cached");
+                        loadSearch();
+                    }
+                });
+            } else {
+                searchRepo.removeItem(searchView.adapterItemCount() - 1);
+                searchView.notifyItemRemoved();
+                //add items one by one
+                for (int i = 0; i < 10; i++) {
+                    searchRepo.saveItem(searchResultSparseArray.valueAt(i));
+                    searchView.notifyItemInserted();
                 }
-            });
+                searchView.setLoaded();
+            }
+
+            pageCounter += 1;
         }
     }
 
@@ -138,6 +164,13 @@ public class SearchPresenter implements ISearchContract.ActionListener,
                 searchView.showSnackbar(R.string.something_went_wrong);
             }
         });
+    }
+
+    @Override
+    public void onLoadMore() {
+        searchRepo.saveItem(null);
+        searchView.notifyItemInserted();
+        doWebSearch(stringToSearch);
     }
 
     // +++ End Retrofit callback implementation +++

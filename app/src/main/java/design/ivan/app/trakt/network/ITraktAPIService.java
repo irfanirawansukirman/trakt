@@ -19,8 +19,8 @@ public interface ITraktAPIService {
     @GET("movies/popular?extended=images,full&limit=10")
     Call<List<Movie>> getTopMovies(@Query("page") int page);
 
-    @GET("search/movie?extended=images,full")
-    Call<List<SearchResult>> searchMovie(@Query("query") String movieName);
+    @GET("search/movie?extended=images,full&limit=10")
+    Call<List<SearchResult>> searchMovie(@Query("query") String movieName, @Query("page") int page);
 
     OkHttpClient httpClient = new OkHttpClient.Builder()
             .addInterceptor(

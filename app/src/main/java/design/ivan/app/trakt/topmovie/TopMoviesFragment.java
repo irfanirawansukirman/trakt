@@ -92,8 +92,8 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
     public void onDestroyView() {
         super.onDestroyView();
         Log.d(TAG, "onDestroyView: ");
-        unbinder.unbind();
         actionListener.clearListeners(getActivity());
+        unbinder.unbind();
     }
 
     @Override

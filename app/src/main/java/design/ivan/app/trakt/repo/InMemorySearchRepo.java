@@ -41,12 +41,12 @@ public class InMemorySearchRepo implements IMemRepository<SearchResult>{
 
     @Override
     public void saveItem(SearchResult item) {
-
+        cachedSearchResult.append(cachedSearchResult.size() + 1, item);
     }
 
     @Override
     public void removeItem(int position) {
-
+        cachedSearchResult.removeAt(position);
     }
 
     @Override
