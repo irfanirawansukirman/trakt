@@ -2,13 +2,14 @@ package design.ivan.app.trakt.main;
 
 import android.os.Bundle;
 import android.support.annotation.StringRes;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -16,11 +17,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import design.ivan.app.trakt.R;
+import design.ivan.app.trakt.model.Movie;
 import design.ivan.app.trakt.search.SearchFragment;
 import design.ivan.app.trakt.topmovie.TopMoviesFragment;
 
@@ -31,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements IMainContract.Mai
     private static final String TAG = "MainActivity";
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private IMainContract.ActionListener actionListener;
+    private BottomSheetBehavior mBottomSheetBehavior;
     @BindView(R.id.container)
     ViewPager mViewPager;
     Snackbar snackbar;
@@ -38,57 +45,46 @@ public class MainActivity extends AppCompatActivity implements IMainContract.Mai
     CoordinatorLayout root;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.tabs)
+    TabLayout tabLayout;
+    @BindView(R.id.frame_bottom_sheet)
+    FrameLayout frameBottomSheet;
+    @BindView(R.id.sheet_item_thumb)
+    ImageView thumb;
+    @BindView(R.id.sheet_item_overview)
+    TextView txtOverview;
+    @BindView(R.id.sheet_item_released)
+    TextView txtItemReleased;
+    @BindView(R.id.sheet_item_title)
+    TextView txtTitle;
+    @BindView(R.id.sheet_item_year)
+    TextView txtYear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
+        mBottomSheetBehavior = BottomSheetBehavior.from(frameBottomSheet);
         actionListener = new MainPresenter(this);
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: ");
         actionListener.setupListeners(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause: ");
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: ");
+        if(mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED)
+            hideBottomSheet();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
         actionListener.clearListeners(this);
     }
 
@@ -132,28 +128,27 @@ public class MainActivity extends AppCompatActivity implements IMainContract.Mai
     }
 
     @Override
-    public void hideSnackbar() {
-        snackbar.dismiss();
+    public void showBottomSheet(Movie movie) {
+        if(movie == null){
+            Log.d(TAG, "showBottomSheet: movie is null not show in bottom sheet");
+            return;
+        }
+        txtItemReleased.setText(movie.getReleased()!=null?movie.getReleased():"");
+        txtOverview.setText(movie.getOverview());
+        txtTitle.setText(movie.getTitle());
+        txtYear.setText(movie.getYear()!=null?movie.getYear().toString():"");
+        Glide.with(this)
+                .load(movie.getImages().getPoster().getThumb())
+                .placeholder(ContextCompat.getDrawable(this, R.drawable.ic_landscape_black_60dp))
+                .error(ContextCompat.getDrawable(this, R.drawable.ic_filler_drawable_60dp))
+                .into(thumb);
+
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     @Override
-    public void setProgressIndicator(boolean active) {
-
-    }
-
-    @Override
-    public void hideMessage() {
-
-    }
-
-    @Override
-    public void showMessage(@StringRes int message) {
-
-    }
-
-    @Override
-    public void enableUI(boolean activate) {
-
+    public void hideBottomSheet() {
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     // +++ End MainView implementation +++

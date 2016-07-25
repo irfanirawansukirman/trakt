@@ -18,12 +18,17 @@ import design.ivan.app.trakt.R;
 import design.ivan.app.trakt.model.Movie;
 
 
-public class TopMoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class TopMoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener{
+    @Override
+    public void onClick(View view) {
+
+    }
+
     public interface OnLoadMoreListener {
         void onLoadMore();
     }
     public interface HandlerTopMoviesOnClick{
-        void OnClickItem(String id);
+        void OnClickItem(Integer id);
     }
     private static final int VIEW_ITEM = 1;
     private static final int VIEW_PROG = 0;
@@ -86,17 +91,32 @@ public class TopMoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
     {
         if(holder.getItemViewType() == VIEW_ITEM){
-            TopMoviesViewHolder viewHolder = (TopMoviesViewHolder)holder;
+            final TopMoviesViewHolder viewHolder = (TopMoviesViewHolder)holder;
             Movie movie = movieSparseArray.valueAt(position);
             viewHolder.itemTitle.setText(movie.getTitle());
-            if(movie.getYear() != null)viewHolder.itemYear.setText(movie.getYear().toString());
             viewHolder.itemReleased.setText(movie.getReleased());
+            viewHolder.itemOverview.setText(movie.getOverview());
             urlThumb = movie.getImages().getPoster().getThumb();
             Glide.with(viewHolder.itemThumb.getContext())
                     .load(urlThumb)
                     .placeholder(ContextCompat.getDrawable(viewHolder.itemThumb.getContext(), R.drawable.ic_landscape_black_60dp))
                     .error(ContextCompat.getDrawable(viewHolder.itemThumb.getContext(), R.drawable.ic_filler_drawable_60dp))
                     .into(viewHolder.itemThumb);
+
+
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = viewHolder.getAdapterPosition();
+                    if(RecyclerView.NO_POSITION != position){
+                        Movie movie = movieSparseArray.valueAt(position);
+                        handlerOnClick.OnClickItem(movie.getIds().getTrakt());
+                    }
+
+                }
+            });
+            //boolean b = viewHolder.itemView.callOnClick(this);
+            //holder.getAdapterPosition();
         }
     }
 
@@ -127,10 +147,10 @@ public class TopMoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public ImageView itemThumb;
         @BindView(R.id.top_movie_item_title)
         public TextView itemTitle;
-        @BindView(R.id.top_movie_item_year)
-        public TextView itemYear;
         @BindView(R.id.top_movie_item_released)
         public TextView itemReleased;
+        @BindView(R.id.top_movie_item_overview)
+        public TextView itemOverview;
         public TopMoviesViewHolder(View itemView)
         {
             super(itemView);

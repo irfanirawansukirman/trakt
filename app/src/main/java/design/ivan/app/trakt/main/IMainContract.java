@@ -3,16 +3,15 @@ package design.ivan.app.trakt.main;
 import android.app.Activity;
 import android.support.annotation.StringRes;
 
+import design.ivan.app.trakt.model.Movie;
+
 public interface IMainContract {
     interface MainView
     {
         void showSnackbar(@StringRes int resMessage);
         void showSnackbar(@StringRes int resMessage, boolean alwaysOn);
-        void hideSnackbar();
-        void setProgressIndicator(boolean active);
-        void hideMessage();
-        void showMessage(@StringRes int message);
-        void enableUI(boolean activate);
+        void showBottomSheet(Movie movie);
+        void hideBottomSheet();
     }
     interface ActionListener
     {

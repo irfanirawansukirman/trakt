@@ -24,6 +24,8 @@ import design.ivan.app.trakt.repo.RepoLoader;
 public class SearchFragment extends Fragment implements ISearchContract.SearchView
         , SearchAdapter.HandlerSearchOnClick{
     private static final String TAG = "SearchFragment";
+    private static final String KEY_RESTARTING = "restarting_search";
+    private boolean restarting = false;
     private Unbinder unbinder;
     private SearchPresenter actionListener;
     private SearchAdapter searchAdapter;
@@ -45,6 +47,11 @@ public class SearchFragment extends Fragment implements ISearchContract.SearchVi
         Log.d(TAG, "onCreateView: ");
         rootView = inflater.inflate(R.layout.frag_search, container, false);
         unbinder = ButterKnife.bind(this, rootView);
+        if (savedInstanceState != null) {
+            // Restore saved layout manager type.
+            //scrollPosition = savedInstanceState.getInt(KEY_SCROLL, 0);
+            restarting = savedInstanceState.getBoolean(KEY_RESTARTING, false);
+        }
         actionListener = new SearchPresenter(RepoLoader.loadMemSearchRepository(), this);
         initListUi();
         searchInput.addTextChangedListener(actionListener);
@@ -65,24 +72,19 @@ public class SearchFragment extends Fragment implements ISearchContract.SearchVi
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause: ");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: ");
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         Log.d(TAG, "onDestroyView: ");
         searchInput.removeTextChangedListener(actionListener);
         actionListener.clearSearchRequest();
         unbinder.unbind();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        restarting = true;
+        outState.putBoolean(KEY_RESTARTING, restarting);
+        super.onSaveInstanceState(outState);
     }
 
     // *** SearchView implementation ***
@@ -118,26 +120,6 @@ public class SearchFragment extends Fragment implements ISearchContract.SearchVi
     }
 
     @Override
-    public void setProgressIndicator(boolean active) {
-
-    }
-
-    @Override
-    public void hideMessage() {
-
-    }
-
-    @Override
-    public void showMessage(@StringRes int message) {
-
-    }
-
-    @Override
-    public void enableUI(boolean activate) {
-
-    }
-
-    @Override
     public void loadData(SparseArray<SearchResult> searchSparse) {
         if(searchAdapter == null){
             Log.d(TAG, "loadData: adapter is not found");
@@ -169,12 +151,23 @@ public class SearchFragment extends Fragment implements ISearchContract.SearchVi
         searchAdapter.setLoaded();
     }
 
+    @Override
+    public boolean isRestarting() {
+        return restarting;
+    }
+
+    @Override
+    public void clearRestarting() {
+        restarting = false;
+    }
+
     // +++ End SearchView implementation +++
 
     // *** SearchAdapter.HandlerSearchOnClick impelementation +++
     @Override
-    public void OnClickItem(String id) {
-
+    public void OnClickItem(Integer id) {
+        Log.d(TAG, "OnClickItem: id = " + id);
+        actionListener.showInBottomSheet(id);
     }
 
 

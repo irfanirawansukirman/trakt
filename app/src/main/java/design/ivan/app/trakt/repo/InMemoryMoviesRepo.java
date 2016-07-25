@@ -8,7 +8,7 @@ import design.ivan.app.trakt.model.Movie;
 public class InMemoryMoviesRepo implements IMemRepository<Movie> {
 
     private final IMemService<Movie> memRepoService;
-    SparseArray<Movie> cachedTopMovies;
+    static SparseArray<Movie> cachedTopMovies;
 
     public InMemoryMoviesRepo(IMemService<Movie> memRepoService) {
         this.memRepoService = memRepoService;
@@ -41,7 +41,7 @@ public class InMemoryMoviesRepo implements IMemRepository<Movie> {
 
     @Override
     public void saveItem(Movie item) {
-        //memRepoService.saveItem(item); //dont tell the map array it doesnt need to know
+        if(item != null) memRepoService.saveItem(item);
         cachedTopMovies.append(cachedTopMovies.size() + 1, item);
         //refreshData();
     }

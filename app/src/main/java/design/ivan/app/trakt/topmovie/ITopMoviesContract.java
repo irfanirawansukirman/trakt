@@ -15,7 +15,6 @@ public interface ITopMoviesContract {
         void showSnackbar(@StringRes int resMessage);
         void showSnackbar(@StringRes int resMessage, boolean alwaysOn);
         void hideSnackbar();
-        void setProgressIndicator(boolean active);
         void hideMessage();
         void showMessage(@StringRes int message);
         void enableUI(boolean activate);
@@ -34,5 +33,6 @@ public interface ITopMoviesContract {
         void initConnection();
         void doWebRequest();
         void cancelWebRequest();
+        void showInBottomSheet(Integer itemId);
     }
 }

@@ -17,7 +17,7 @@ import design.ivan.app.trakt.topmovie.TopMoviesAdapter;
 
 public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public interface HandlerSearchOnClick{
-        void OnClickItem(String id);
+        void OnClickItem(Integer id);
     }
     private static final int VIEW_ITEM = 1;
     private static final int VIEW_PROG = 0;
@@ -75,20 +75,31 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position)
     {
         if(holder.getItemViewType() == VIEW_ITEM){
-            TopMoviesAdapter.TopMoviesViewHolder viewHolder = (TopMoviesAdapter.TopMoviesViewHolder)holder;
+            final TopMoviesAdapter.TopMoviesViewHolder viewHolder = (TopMoviesAdapter.TopMoviesViewHolder)holder;
             Movie movie = searchResultSparseArray.valueAt(position).getMovie();
             viewHolder.itemTitle.setText(movie.getTitle());
-            if(movie.getYear() != null)viewHolder.itemYear.setText(movie.getYear().toString());
             viewHolder.itemReleased.setText(movie.getReleased());
+            viewHolder.itemOverview.setText(movie.getOverview());
             urlThumb = movie.getImages().getPoster().getThumb();
             Glide.with(viewHolder.itemThumb.getContext())
                     .load(urlThumb)
                     .placeholder(ContextCompat.getDrawable(viewHolder.itemThumb.getContext(), R.drawable.ic_landscape_black_60dp))
                     .error(ContextCompat.getDrawable(viewHolder.itemThumb.getContext(), R.drawable.ic_filler_drawable_60dp))
                     .into(viewHolder.itemThumb);
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = holder.getAdapterPosition();
+                    if(RecyclerView.NO_POSITION != position){
+                        Movie movie = searchResultSparseArray.valueAt(position).getMovie();
+                        handlerSearchOnClick.OnClickItem(movie.getIds().getTrakt());
+                    }
+
+                }
+            });
         }
     }
 

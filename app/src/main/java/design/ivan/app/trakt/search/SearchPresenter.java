@@ -1,6 +1,5 @@
 package design.ivan.app.trakt.search;
 
-import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,6 +11,7 @@ import java.util.List;
 
 import design.ivan.app.trakt.R;
 import design.ivan.app.trakt.Utility;
+import design.ivan.app.trakt.main.MainActivity;
 import design.ivan.app.trakt.model.SearchResult;
 import design.ivan.app.trakt.network.ITraktAPIService;
 import design.ivan.app.trakt.repo.IMemRepository;
@@ -34,16 +34,6 @@ public class SearchPresenter implements ISearchContract.ActionListener,
     public SearchPresenter(IMemRepository<SearchResult> searchRepo, ISearchContract.SearchView searchView) {
         this.searchRepo = searchRepo;
         this.searchView = searchView;
-    }
-
-    @Override
-    public void setupListeners(Activity main) {
-
-    }
-
-    @Override
-    public void clearListeners(Activity main) {
-
     }
 
     @Override
@@ -90,8 +80,19 @@ public class SearchPresenter implements ISearchContract.ActionListener,
     }
 
     @Override
-    public void cancelWebRequest() {
-
+    public void showInBottomSheet(Integer itemId) {
+        if(itemId == null){
+            Log.d(TAG, "showInBottomSheet: Item no longer on the position clicked - adapter is getting updated");
+            return;
+        }
+        searchRepo.getItem(itemId, new IMemRepository.GetItemCallback<SearchResult>() {
+            @Override
+            public void onItemLoaded(SearchResult item) {
+                ((MainActivity)((SearchFragment)searchView)
+                        .getActivity())
+                        .showBottomSheet(item.getMovie());
+            }
+        });
     }
 
     // *** TextWatcher implementation ***
@@ -111,6 +112,14 @@ public class SearchPresenter implements ISearchContract.ActionListener,
         stringToSearch = editable.toString();
         if(stringToSearch.isEmpty())
             return;
+        if(searchView.isRestarting() && searchRepo.arrayItemCount() > 0)
+        {
+            //if we are coming back from a restart and we still have items in the cache consider loading those
+            //items first
+            loadSearch();
+            searchView.clearRestarting();
+            return;
+        }
         doWebSearch(stringToSearch, true);
     }
 
@@ -130,7 +139,9 @@ public class SearchPresenter implements ISearchContract.ActionListener,
             ArrayList<SearchResult> searchResults = (ArrayList<SearchResult>) response.body();
             if(searchResults.size()<=0)
                 return;
-            SparseArray<SearchResult> searchResultSparseArray = Utility.prepareSparseArray(searchResults);
+
+            SparseArray<SearchResult> searchResultSparseArray = Utility
+                    .prepareSparseArray(((Fragment) searchView).getActivity(), searchResults);
 
             if(pageCounter == 0){
                 //first time loading pages
@@ -158,7 +169,10 @@ public class SearchPresenter implements ISearchContract.ActionListener,
 
     @Override
     public void onFailure(Call<List<SearchResult>> call, Throwable t) {
-        Log.d(TAG, "onFailure: t = " + t);
+        Log.d(TAG, "onFailure: t = " + t.getMessage());
+        if(t.getMessage().equals("Canceled")){
+            return;
+        }
         ((Fragment)searchView).getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 searchView.showSnackbar(R.string.something_went_wrong);

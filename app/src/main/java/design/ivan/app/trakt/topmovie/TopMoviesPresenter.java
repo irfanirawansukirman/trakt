@@ -95,6 +95,22 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
             call.cancel();
     }
 
+    @Override
+    public void showInBottomSheet(Integer itemId) {
+        if(itemId == null){
+            Log.d(TAG, "showInBottomSheet: Item no longer on the position clicked - adapter is getting updated");
+            return;
+        }
+        topMoviesRepo.getItem(itemId, new IMemRepository.GetItemCallback<Movie>() {
+            @Override
+            public void onItemLoaded(Movie item) {
+                ((MainActivity)((TopMoviesFragment)topMoviesView)
+                        .getActivity())
+                        .showBottomSheet(item);
+            }
+        });
+    }
+
     // +++ End ITopMoviesContract.ActionListener implementation +++
 
     // *** Retrofit 2 callback implementation ***
@@ -110,7 +126,8 @@ public class TopMoviesPresenter implements ITopMoviesContract.ActionListener, Ca
             ArrayList<Movie> movies = (ArrayList<Movie>) response.body();
             if(movies.size()<=0)
                 return;
-            SparseArray<Movie> movieSparseArray = Utility.prepareSparseArray(movies);
+            SparseArray<Movie> movieSparseArray = Utility
+                    .prepareSparseArray(((Fragment) topMoviesView).getActivity(), movies);
 
             if(pageCounter == 0){
                 //first time loading pages

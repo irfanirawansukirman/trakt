@@ -1,6 +1,5 @@
 package design.ivan.app.trakt.search;
 
-import android.app.Activity;
 import android.support.annotation.StringRes;
 import android.util.SparseArray;
 
@@ -12,24 +11,21 @@ public interface ISearchContract {
         void showSnackbar(@StringRes int resMessage);
         void showSnackbar(@StringRes int resMessage, boolean alwaysOn);
         void hideSnackbar();
-        void setProgressIndicator(boolean active);
-        void hideMessage();
-        void showMessage(@StringRes int message);
-        void enableUI(boolean activate);
         void loadData(SparseArray<SearchResult> searchSparse);
         int adapterItemCount();
         void notifyItemInserted();
         void notifyItemRemoved();
         void setLoaded();
+        boolean isRestarting();
+        void clearRestarting();
     }
-    interface ActionListener{
-        void setupListeners(Activity main);
-        void clearListeners(Activity main);
+    interface ActionListener
+    {
         void setupSearchRequest();
         void clearSearchRequest();
         void loadSearch();
         void doWebSearch(String searchString, boolean isNewSearch);
         void doWebSearch(String searchString);
-        void cancelWebRequest();
+        void showInBottomSheet(Integer itemId);
     }
 }

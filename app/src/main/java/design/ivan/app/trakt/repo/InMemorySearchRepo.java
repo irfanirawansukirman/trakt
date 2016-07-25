@@ -41,6 +41,7 @@ public class InMemorySearchRepo implements IMemRepository<SearchResult>{
 
     @Override
     public void saveItem(SearchResult item) {
+        if(item != null) memRepoService.saveItem(item);
         cachedSearchResult.append(cachedSearchResult.size() + 1, item);
     }
 

@@ -71,27 +71,18 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: ");
         goToPostion();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause: ");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop: ");
         actionListener.cancelWebRequest();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG, "onDestroyView: ");
         actionListener.clearListeners(getActivity());
         unbinder.unbind();
     }
@@ -106,8 +97,9 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
 
     // *** HandlerTopMoviesOnClick implementation ***
     @Override
-    public void OnClickItem(String id) {
-
+    public void OnClickItem(Integer id) {
+        Log.d(TAG, "OnClickItem: id = " + id);
+        actionListener.showInBottomSheet(id);
     }
 
     //*** TopMoviesView implementation ***
@@ -162,11 +154,6 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
             return;
 
         snackbar.dismiss();
-    }
-
-    @Override
-    public void setProgressIndicator(boolean active) {
-
     }
 
     @Override

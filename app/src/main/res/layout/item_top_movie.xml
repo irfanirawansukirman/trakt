@@ -3,14 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="200dp">
+    android:layout_height="@dimen/item_card_height"
+    app:cardUseCompatPadding="true"
+    app:contentPaddingRight="@dimen/list_card_padding"
+    app:contentPaddingLeft="@dimen/list_card_padding"
+    app:cardCornerRadius="@dimen/item_corner_radius">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
         <ImageView
             android:id="@+id/top_movie_item_thumb"
-            android:layout_width="140dp"
+            android:layout_width="@dimen/item_thumb_width"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             app:srcCompat="@drawable/ic_landscape_black_60dp"/>
@@ -30,20 +34,23 @@
                 android:ellipsize="end"
                 app:layout_columnWeight="1"
                 tools:text="Some Great Title"/>
-            <TextView
-                android:id="@+id/top_movie_item_year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                app:layout_columnWeight="1"
-                tools:text="2016"/>
+
             <TextView
                 android:id="@+id/top_movie_item_released"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 app:layout_columnWeight="1"
-                tools:text="Released: July 2, 2015"/>
+                tools:text="July 2, 2015"/>
+            <TextView
+                android:id="@+id/top_movie_item_overview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:maxLines="5"
+                android:ellipsize="end"
+                app:layout_columnWeight="1"
+                tools:text="Almost there to see if we have some mistakes there. Some really long text to demonstrate the space where the overview will be locate and we keep adding more and more and testing more and more when we have a long string of text "/>
             <android.support.v4.widget.Space
                 app:layout_rowWeight="1"
                 app:layout_gravity="fill_horizontal"/>
