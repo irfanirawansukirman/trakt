@@ -10,5 +10,5 @@
     <dimen name="item_corner_radius">10dp</dimen>
     <dimen name="sheet_content_padding">10dp</dimen>
     <dimen name="sheet_thumb_margin_right">10dp</dimen>
-
+    <dimen name="card_elevation">5dp</dimen>
 </resources>

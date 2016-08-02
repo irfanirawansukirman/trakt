@@ -20,6 +20,7 @@ import butterknife.Unbinder;
 import design.ivan.app.trakt.R;
 import design.ivan.app.trakt.model.SearchResult;
 import design.ivan.app.trakt.repo.RepoLoader;
+import design.ivan.app.trakt.ui.VertialSpaceDecorator;
 
 public class SearchFragment extends Fragment implements ISearchContract.SearchView
         , SearchAdapter.HandlerSearchOnClick{
@@ -92,6 +93,7 @@ public class SearchFragment extends Fragment implements ISearchContract.SearchVi
     @Override
     public void initListUi() {
         searchList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        searchList.addItemDecoration(new VertialSpaceDecorator(15));
         searchAdapter = new SearchAdapter(searchList, this);
         searchList.setAdapter(searchAdapter);
         searchAdapter.setOnLoadMoreListener(actionListener);

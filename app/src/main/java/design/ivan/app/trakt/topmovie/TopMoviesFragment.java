@@ -20,6 +20,7 @@ import butterknife.Unbinder;
 import design.ivan.app.trakt.R;
 import design.ivan.app.trakt.model.Movie;
 import design.ivan.app.trakt.repo.RepoLoader;
+import design.ivan.app.trakt.ui.VertialSpaceDecorator;
 
 
 public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.HandlerTopMoviesOnClick,
@@ -107,6 +108,7 @@ public class TopMoviesFragment extends Fragment implements TopMoviesAdapter.Hand
     @Override
     public void initListUi() {
         listTopMovies.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listTopMovies.addItemDecoration(new VertialSpaceDecorator(15));
         topMoviesAdapter = new TopMoviesAdapter(listTopMovies, this);
         listTopMovies.setAdapter(topMoviesAdapter);
         topMoviesAdapter.setOnLoadMoreListener(actionListener);

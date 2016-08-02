@@ -7,7 +7,8 @@
         android:id="@+id/top_movies_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        tools:listitem="@layout/item_top_movie"/>
     <TextView
         android:id="@+id/top_movies_message"
         android:layout_width="wrap_content"

@@ -6,8 +6,9 @@
     android:layout_height="@dimen/item_card_height"
     app:cardUseCompatPadding="true"
     app:contentPaddingRight="@dimen/list_card_padding"
-    app:contentPaddingLeft="@dimen/list_card_padding"
-    app:cardCornerRadius="@dimen/item_corner_radius">
+    app:cardCornerRadius="@dimen/item_corner_radius"
+    app:cardPreventCornerOverlap="false"
+    app:cardElevation="@dimen/card_elevation">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
